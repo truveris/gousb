@@ -37,6 +37,9 @@ type Descriptor struct {
 
 	// Configuration information
 	Configs []ConfigInfo
+
+	// libusb_device
+	dev *C.libusb_device
 }
 
 func newDescriptor(dev *C.libusb_device) (*Descriptor, error) {
@@ -67,5 +70,15 @@ func newDescriptor(dev *C.libusb_device) (*Descriptor, error) {
 		SubClass: uint8(desc.bDeviceSubClass),
 		Protocol: uint8(desc.bDeviceProtocol),
 		Configs:  cfgs,
+		dev:      dev,
 	}, nil
+}
+
+// Opens the device and returns a new Device instance
+func (d *Descriptor) Open() (*Device, error) {
+	var handle *C.libusb_device_handle
+	if errno := C.libusb_open(d.dev, &handle); errno != 0 {
+		return nil, usbError(errno)
+	}
+	return newDevice(handle, d), nil
 }
