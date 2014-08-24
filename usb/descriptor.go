@@ -60,17 +60,18 @@ func newDescriptor(dev *C.libusb_device) (*Descriptor, error) {
 	}
 
 	return &Descriptor{
-		Bus:      uint8(C.libusb_get_bus_number(dev)),
-		Address:  uint8(C.libusb_get_device_address(dev)),
-		Spec:     BCD(desc.bcdUSB),
-		Device:   BCD(desc.bcdDevice),
-		Vendor:   ID(desc.idVendor),
-		Product:  ID(desc.idProduct),
-		Class:    uint8(desc.bDeviceClass),
-		SubClass: uint8(desc.bDeviceSubClass),
-		Protocol: uint8(desc.bDeviceProtocol),
-		Configs:  cfgs,
-		dev:      dev,
+		Bus:          uint8(C.libusb_get_bus_number(dev)),
+		Address:      uint8(C.libusb_get_device_address(dev)),
+		Spec:         BCD(desc.bcdUSB),
+		Device:       BCD(desc.bcdDevice),
+		Vendor:       ID(desc.idVendor),
+		Product:      ID(desc.idProduct),
+		Class:        uint8(desc.bDeviceClass),
+		SubClass:     uint8(desc.bDeviceSubClass),
+		Protocol:     uint8(desc.bDeviceProtocol),
+		SerialNumber: getSerialNumber(dev, desc.iSerialNumber),
+		Configs:      cfgs,
+		dev:          dev,
 	}, nil
 }
 
@@ -81,4 +82,13 @@ func (d *Descriptor) Open() (*Device, error) {
 		return nil, usbError(errno)
 	}
 	return newDevice(handle, d), nil
+}
+
+func getSerialNumber(dev *C.libusb_device, index C.uint8_t) string {
+	data := make([]byte, 1024)
+	var devHandle *C.libusb_device_handle
+	C.libusb_open(dev, &devHandle)
+	C.libusb_get_string_descriptor_ascii(devHandle, index, (*C.uchar)(unsafe.Pointer(&data[0])), C.int(len(data)))
+	C.libusb_close(devHandle)
+	return C.GoString((*C.char)(unsafe.Pointer(&data[0])))
 }
