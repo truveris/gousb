@@ -31,9 +31,10 @@ type Descriptor struct {
 	Product ID // The Product identifier
 
 	// Protocol information
-	Class    uint8 // The class of this device
-	SubClass uint8 // The sub-class (within the class) of this device
-	Protocol uint8 // The protocol (within the sub-class) of this device
+	Class        uint8  // The class of this device
+	SubClass     uint8  // The sub-class (within the class) of this device
+	Protocol     uint8  // The protocol (within the sub-class) of this device
+	SerialNumber string // The device serial number
 
 	// Configuration information
 	Configs []ConfigInfo
