@@ -89,8 +89,13 @@ func (d *Descriptor) Open() (*Device, error) {
 func getSerialNumber(dev *C.libusb_device, index C.uint8_t) string {
 	data := make([]byte, 1024)
 	var devHandle *C.libusb_device_handle
-	C.libusb_open(dev, &devHandle)
-	C.libusb_get_string_descriptor_ascii(devHandle, index, (*C.uchar)(unsafe.Pointer(&data[0])), C.int(len(data)))
-	C.libusb_close(devHandle)
+	if errno := C.libusb_open(dev, &devHandle); errno != 0 {
+		return ""
+	}
+	defer C.libusb_close(devHandle)
+	errno := C.libusb_get_string_descriptor_ascii(devHandle, index, (*C.uchar)(unsafe.Pointer(&data[0])), C.int(len(data)))
+	if errno <= 0 {
+		return ""
+	}
 	return C.GoString((*C.char)(unsafe.Pointer(&data[0])))
 }
