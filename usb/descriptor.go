@@ -69,13 +69,7 @@ func newDescriptor(dev *C.libusb_device) (*Descriptor, error) {
 	}
 	defer Close(handle)
 
-	errno := C.libusb_get_string_descriptor_ascii(
-		handle,
-		desc.iSerialNumber,
-		(*C.uchar)(unsafe.Pointer(&data[0])),
-		C.int(len(data)))
-
-	if errno <= 0 {
+	if errno := C.libusb_get_string_descriptor_ascii(handle, desc.iSerialNumber, (*C.uchar)(unsafe.Pointer(&data[0])), C.int(len(data))); errno <= 0 {
 		return nil, usbError(errno)
 	}
 
