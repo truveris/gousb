@@ -61,6 +61,26 @@ func newDescriptor(dev *C.libusb_device) (*Descriptor, error) {
 		C.libusb_free_config_descriptor(cfg)
 	}
 
+	// Retrieve the device serial number
+	data := make([]byte, 512)
+	var handle *C.libusb_device_handle
+	if errno := C.libusb_open(dev, &handle); errno != 0 {
+		return nil, usbError(errno)
+	}
+	defer Close(handle)
+
+	errno := C.libusb_get_string_descriptor_ascii(
+		handle,
+		desc.iSerialNumber,
+		(*C.uchar)(unsafe.Pointer(&data[0])),
+		C.int(len(data)))
+
+	if errno <= 0 {
+		return nil, usbError(errno)
+	}
+
+	serial := C.GoString((*C.char)(unsafe.Pointer(&data[0])))
+
 	return &Descriptor{
 		Bus:          uint8(C.libusb_get_bus_number(dev)),
 		Address:      uint8(C.libusb_get_device_address(dev)),
@@ -71,13 +91,13 @@ func newDescriptor(dev *C.libusb_device) (*Descriptor, error) {
 		Class:        uint8(desc.bDeviceClass),
 		SubClass:     uint8(desc.bDeviceSubClass),
 		Protocol:     uint8(desc.bDeviceProtocol),
-		SerialNumber: getSerialNumber(dev, desc.iSerialNumber),
+		SerialNumber: serial,
 		Configs:      cfgs,
 		dev:          dev,
 	}, nil
 }
 
-// Opens the device and returns a new Device instance
+// Open the device and returns a new Device instance
 func (d *Descriptor) Open() (*Device, error) {
 	var handle *C.libusb_device_handle
 	if errno := C.libusb_open(d.dev, &handle); errno != 0 {
