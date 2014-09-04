@@ -21,7 +21,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/kylelemons/gousb/usb"
+	"github.com/xmonk/gousb/usb"
 )
 
 // A Vendor contains the name of the vendor and mappings corresponding to all
