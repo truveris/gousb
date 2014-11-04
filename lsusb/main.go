@@ -44,6 +44,10 @@ func main() {
 		fmt.Printf("%03d.%03d %s:%s %s\n", desc.Bus, desc.Address, desc.Vendor, desc.Product, usbid.Describe(desc))
 		fmt.Printf("  Protocol: %s\n", usbid.Classify(desc))
 
+		if desc.SerialNumber != "" {
+			fmt.Printf("  Serial: %s\n", desc.SerialNumber)
+		}
+
 		// The configurations can be examined from the Descriptor, though they can only
 		// be set once the device is opened.  All configuration references must be closed,
 		// to free up the memory in libusb.
