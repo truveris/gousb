@@ -20,8 +20,8 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/kylelemons/gousb/usb"
-	"github.com/kylelemons/gousb/usbid"
+	"github.com/xmonk/gousb/usb"
+	"github.com/xmonk/gousb/usbid"
 )
 
 var (
@@ -43,6 +43,10 @@ func main() {
 		// The usbid package can be used to print out human readable information.
 		fmt.Printf("%03d.%03d %s:%s %s\n", desc.Bus, desc.Address, desc.Vendor, desc.Product, usbid.Describe(desc))
 		fmt.Printf("  Protocol: %s\n", usbid.Classify(desc))
+
+		if desc.SerialNumber != "" {
+			fmt.Printf("  Serial: %s\n", desc.SerialNumber)
+		}
 
 		// The configurations can be examined from the Descriptor, though they can only
 		// be set once the device is opened.  All configuration references must be closed,
