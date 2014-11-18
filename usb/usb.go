@@ -37,7 +37,8 @@ func (c *Context) Debug(level int) {
 
 func NewContext() *Context {
 	c := &Context{
-		done: make(chan struct{}),
+		done:  make(chan struct{}),
+		yield: make(chan struct{}),
 	}
 
 	if errno := C.libusb_init(&c.ctx); errno != 0 {
@@ -60,7 +61,6 @@ func NewContext() *Context {
 				log.Printf("handle_events: error: %s", usbError(errno))
 				continue
 			}
-			//log.Printf("handle_events returned")
 		}
 	}()
 
