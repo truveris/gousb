@@ -18,7 +18,8 @@ import (
 	"fmt"
 )
 
-// #include <libusb-1.0/libusb.h>
+// #cgo pkg-config: libusb-1.0
+// #include <libusb.h>
 import "C"
 
 type usbError C.int

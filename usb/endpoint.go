@@ -14,7 +14,8 @@
 
 package usb
 
-// #include <libusb-1.0/libusb.h>
+// #cgo pkg-config: libusb-1.0
+// #include <libusb.h>
 import "C"
 
 import (
