@@ -1,7 +1,10 @@
+// +build linux,darwin
+
 package usb
 
 /*
-#include <libusb-1.0/libusb.h>
+#cgo pkg-config: libusb-1.0
+#include <libusb.h>
 
 extern int attachCallback(
 	libusb_context* ctx,

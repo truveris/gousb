@@ -1,3 +1,5 @@
+// +build linux,darwin
+
 #include <libusb-1.0/libusb.h>
 #include "_cgo_export.h"
 
