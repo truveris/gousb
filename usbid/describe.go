@@ -26,7 +26,7 @@ package usbid
 import (
 	"fmt"
 
-	"github.com/xmonk/gousb/usb"
+	"github.com/truveris/gousb/usb"
 )
 
 // Describe returns a human readable string describing the vendor and product
