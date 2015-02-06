@@ -121,6 +121,14 @@ func (d *Device) Close() error {
 	return nil
 }
 
+func (d *Device) DetachKernelDriver(iface uint8) error {
+	errno := C.libusb_detach_kernel_driver(d.handle, C.int(iface))
+	if errno != 0 {
+		return usbError(errno)
+	}
+	return nil
+}
+
 func (d *Device) OpenEndpoint(conf, iface, setup, epoint uint8) (Endpoint, error) {
 	end := &endpoint{
 		Device: d,
